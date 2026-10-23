@@ -1,0 +1,19 @@
+{
+  "sample": true,
+  "as_of": "2026-10-23T09:00:00Z",
+  "summary": "Exemple : BTC en hausse, ETH stable, volatilité en baisse.",
+  "changes": [
+    {"title": "BTC +4,2 % sur 24 h", "direction": "up", "importance": 3,
+     "why": "Le prix passe au-dessus de sa moyenne sur 7 jours avec un volume supérieur à la normale.",
+     "evidence": "market_overview.BTC.change_24h", "source": "exemple"},
+    {"title": "Volatilité en baisse", "direction": "down", "importance": 2,
+     "why": "Les variations horaires se calment : le marché est moins nerveux qu'hier.",
+     "evidence": "market_overview.volatility", "source": "exemple"},
+    {"title": "ETH stable (±0,3 %)", "direction": "flat", "importance": 1,
+     "why": "Aucun signal clair : l'ETH n'a pas suivi le mouvement du BTC.",
+     "evidence": "market_overview.ETH.change_24h", "source": "exemple"}
+  ],
+  "failed_sources": [
+    {"name": "sentiment", "error": "Source indisponible (exemple) : aucune donnée affichée à sa place."}
+  ]
+}

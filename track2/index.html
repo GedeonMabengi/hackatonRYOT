@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quoi de neuf sur le marché</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --fg:#14181f; --muted:#5b6472; --up:#0a7a43; --down:#b3261e; --flat:#5b6472; --warn:#8a5a00; --warnbg:#fff4d6; --line:#e3e6eb; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1318; --card:#181d24; --fg:#e8ebf0; --muted:#9aa4b2; --up:#4cd48a; --down:#ff8a80; --flat:#9aa4b2; --warn:#ffd27a; --warnbg:#3a2e12; --line:#2a313b; }
+  }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.5 system-ui,sans-serif }
+  main { max-width:720px; margin:0 auto; padding:24px 16px }
+  h1 { font-size:1.4rem; margin:0 0 4px }
+  .meta { color:var(--muted); font-size:.85rem; margin-bottom:16px }
+  .banner { background:var(--warnbg); color:var(--warn); padding:10px 14px; border-radius:8px; margin-bottom:12px; font-size:.9rem }
+  .summary { font-size:1.05rem; margin:0 0 16px }
+  ul { list-style:none; padding:0; margin:0; display:grid; gap:12px }
+  li { background:var(--card); border:1px solid var(--line); border-left:6px solid var(--flat); border-radius:8px; padding:12px 14px }
+  li.up { border-left-color:var(--up) } li.down { border-left-color:var(--down) }
+  .title { font-weight:600 } .up .title { color:var(--up) } .down .title { color:var(--down) }
+  .why { margin:4px 0 6px }
+  details { color:var(--muted); font-size:.85rem }
+</style>
+</head>
+<body>
+<main>
+  <h1>Quoi de neuf sur le marché</h1>
+  <div class="meta" id="meta"></div>
+  <div id="banners"></div>
+  <p class="summary" id="summary"></p>
+  <ul id="list" aria-label="Changements classés par importance"></ul>
+</main>
+<script>
+const arrow = {up:"▲", down:"▼", flat:"■"};
+const el = id => document.getElementById(id);
+const make = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
+
+fetch("data.json").then(r => r.json()).then(d => {
+  el("meta").textContent = "Données du " + new Date(d.as_of).toLocaleString("fr-FR") + (d.sample ? " — DONNÉES D'EXEMPLE" : "");
+  el("summary").textContent = d.summary;
+  for (const f of d.failed_sources || []) {
+    el("banners").append(make("div", "banner", "⚠ " + f.name + " : " + f.error));
+  }
+  d.changes.sort((a, b) => b.importance - a.importance).forEach(c => {
+    const li = make("li", c.direction);
+    li.append(make("div", "title", arrow[c.direction] + " " + c.title), make("div", "why", c.why));
+    const det = make("details"); det.append(make("summary", "", "Preuve"), make("div", "", c.evidence + " (source : " + c.source + ")"));
+    li.append(det); el("list").append(li);
+  });
+}).catch(e => el("summary").textContent = "Impossible de charger data.json : " + e.message);
+</script>
+</body>
+</html>
